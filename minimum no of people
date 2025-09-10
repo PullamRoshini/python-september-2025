@@ -1,0 +1,19 @@
+from collections import defaultdict
+class Solution:
+    def minimumTeachings(self, n: int, languages: List[List[int]], friendships: List[List[int]]) -> int:
+        lang_sets = [set(langs) for langs in languages]
+        to_teach = set()
+        for u,v in friendships:
+            u -= 1
+            v -= 1
+            if lang_sets[u].isdisjoint(lang_sets[v]):
+                to_teach.add(u)
+                to_teach.add(v)
+        if not to_teach:
+            return 0
+        lang_count = defaultdict(int)
+        for user in to_teach:
+            for l in lang_sets[user]:
+                lang_count[l] += 1
+        max_known = max(lang_count.values(),default = 0)
+        return len(to_teach)-max_known
