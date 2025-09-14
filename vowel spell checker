@@ -1,0 +1,29 @@
+class Solution:
+    def spellchecker(self, wordlist: List[str], queries: List[str]) -> List[str]:
+        words_perfect=set(wordlist)
+        words_cap={}
+        words_vowel={}
+        def devowel(word):
+            return ''.join('*' if c in 'aeiou' else c for c in word)
+        for word in wordlist:
+            lower=word.lower()
+            if lower not in words_cap:
+                words_cap[lower]=word
+            v=devowel(lower)
+            if v not in words_vowel:
+                words_vowel[v]=word
+        ans=[]
+        for q in queries:
+            if q in words_perfect:
+                ans.append(q)
+            else:
+                lower=q.lower()
+                if lower in words_cap:
+                    ans.append(words_cap[lower])
+                else:
+                    v=devowel(lower)
+                    if v in words_vowel:
+                        ans.append(words_vowel[v])
+                    else:
+                        ans.append("")
+        return ans
