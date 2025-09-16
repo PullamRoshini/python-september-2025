@@ -1,0 +1,15 @@
+class Solution:
+    def replaceNonCoprimes(self, nums: List[int]) -> List[int]:
+        stk:List[int]=[]
+        for x in nums:
+            stk.append(x)
+            while len(stk)>=2:
+                a=stk[-2]
+                b=stk[-1]
+                g=math.gcd(a,b)
+                if g==1:
+                    break
+                l=a//g*b
+                stk.pop()
+                stk[-1]=l
+        return stk
