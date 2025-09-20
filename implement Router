@@ -1,0 +1,36 @@
+class Router:
+    from collections import deque,defaultdict
+    import bisect
+    def __init__(self, memoryLimit: int):
+        self.mem = memoryLimit
+        self.queue =  deque()
+        self.duplicate_set = set()        
+        self.dest_timestamps = defaultdict(list)
+        self.processed = defaultdict(int)
+    def addPacket(self, source: int, destination: int, timestamp: int) -> bool:
+        key = (source,destination,timestamp)
+        if key in self.duplicate_set:
+            return False
+        if len(self.queue) == self.mem:
+            self.forwardPacket()
+        self.queue.append(key)
+        self.duplicate_set.add(key)
+        self.dest_timestamps[destination].append(timestamp)
+        return True   
+
+    def forwardPacket(self) -> List[int]:
+        if not self.queue:
+            return []
+        source,destination,timestamp =self.queue.popleft()
+        self.duplicate_set.remove((source,destination,timestamp))
+        self.processed[destination] += 1
+        return [source,destination,timestamp]
+
+    def getCount(self, destination: int, startTime: int, endTime: int) -> int:
+        if destination not in self.dest_timestamps:
+            return 0
+        timestamps = self.dest_timestamps[destination]
+        start_idx = self.processed.get(destination,0)
+        lo = bisect.bisect_left(timestamps,startTime,lo = start_idx)
+        hi = bisect.bisect_right(timestamps,endTime,lo = start_idx)
+        return hi-lo
